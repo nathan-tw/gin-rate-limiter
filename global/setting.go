@@ -1,8 +1,13 @@
 package global
 
-import "github.com/nathan-tw/gin-rate-limiter/pkg/setting"
+import (
+	"github.com/nathan-tw/gin-rate-limiter/pkg/logger"
+	"github.com/nathan-tw/gin-rate-limiter/pkg/setting"
+)
 
 var (
-	RedisSetting  *setting.ServerSettingS
+	RedisSetting  *setting.RedisSettingS
 	ServerSetting *setting.ServerSettingS
+	AppSetting    *setting.AppSettingS
+	Logger        *logger.Logger
 )

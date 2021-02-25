@@ -2,3 +2,10 @@ Redis:
   Host: 127.0.0.1
   Port: 6379
   Name: Dcard
+
+App:
+  DefaultPageSize: 10
+  MaxPageSize: 100
+  LogSavePath: storage/logs
+  LogFileName: app
+  LogFileExt: .log
