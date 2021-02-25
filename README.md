@@ -1,4 +1,4 @@
-# gin-rate-limiter*
+# gin-rate-limiter
 
 ## Requirement
 
