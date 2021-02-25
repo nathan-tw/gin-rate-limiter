@@ -1,0 +1,20 @@
+package setting
+
+import "github.com/spf13/viper"
+
+type Setting struct {
+	vp *viper.Viper
+}
+
+// setting reader
+func NewSetting() (*Setting, error) {
+	vp  := viper.New()
+	vp.AddConfigPath("config/")
+	vp.SetConfigName("config")
+	vp.SetConfigType("yaml")
+	err := vp.ReadInConfig()
+	if err != nil {
+		return nil, err
+	}
+	return &Setting{vp}, nil
+}
