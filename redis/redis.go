@@ -1,7 +1,6 @@
 package redis
 
 import (
-	"context"
 	"fmt"
 	"strconv"
 	"time"
@@ -17,13 +16,15 @@ type Database interface {
 	IncreaseVisit(string) error
 }
 
+var RedisServer *Server
+
 type Server struct {
 	timeout time.Duration
 	client  *redis.Client
 	maxIP   int
 }
 
-func NewRedis(maxIP, timeout int) *Server {
+func NewRedis(maxIP, timeout int) (*Server, error) {
 	db := new(Server)
 
 	addr := fmt.Sprintf("%v:%v", global.RedisSetting.Host, global.RedisSetting.Port)
@@ -31,10 +32,14 @@ func NewRedis(maxIP, timeout int) *Server {
 		Addr: addr,
 		DB:   0,
 	})
+	err := db.client.Ping(db.client.Context()).Err()
+	if err != nil {
+		return nil, err
+	}
 	db.timeout = time.Duration(timeout) * time.Second
 	db.maxIP = maxIP
 
-	return db
+	return db, nil
 }
 
 func (d *Server) SetKey(ip string,) error {

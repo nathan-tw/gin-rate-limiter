@@ -6,7 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/nathan-tw/gin-rate-limiter/global"
-	"github.com/nathan-tw/gin-rate-limiter/middleware"
+	// "github.com/nathan-tw/gin-rate-limiter/middleware"
 	"github.com/nathan-tw/gin-rate-limiter/pkg/logger"
 	"github.com/nathan-tw/gin-rate-limiter/pkg/setting"
 	"github.com/nathan-tw/gin-rate-limiter/redis"
@@ -75,6 +75,10 @@ func setupRedis() error {
 		maxIP = 1000
 		timeout = 3600
 	)
-	db := redis.NewRedis(maxIP, timeout)
-	return db
+	db, err := redis.NewRedis(maxIP, timeout)
+	redis.RedisServer = db
+	if err != nil {
+		return err
+	}
+	return nil
 }
