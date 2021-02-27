@@ -6,7 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/nathan-tw/gin-rate-limiter/global"
-	// "github.com/nathan-tw/gin-rate-limiter/middleware"
+	"github.com/nathan-tw/gin-rate-limiter/middleware"
 	"github.com/nathan-tw/gin-rate-limiter/pkg/logger"
 	"github.com/nathan-tw/gin-rate-limiter/pkg/setting"
 	"github.com/nathan-tw/gin-rate-limiter/redis"
@@ -20,7 +20,6 @@ func init () {
 	if err != nil {
 		log.Fatalf("init.setupSetting err: %v", err)
 	}
-	fmt.Println(global.RedisSetting)
 	err = setupLogger()
 	if err != nil {
 		log.Fatalf("init.setupLogger err %v", err)
@@ -29,12 +28,18 @@ func init () {
 	if err != nil {
 		log.Fatalf("init.setupRedis err: %v", err)
 	}
+	fmt.Println(redis.RedisServer.CheckExist("1"))
 }
 
 func main() {
 	global.Logger.Info("Start using gin-rate-limiter")
 	r := gin.Default()
-	// r.Use(middleware.Limiter())
+	r.Use(middleware.Limiter())
+	r.GET("/", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"foo": "bar",
+		})
+	})
 	r.Run()
 }
 
