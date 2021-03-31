@@ -28,3 +28,18 @@ redis lock有很多實現方式，例如對多個redis做分散鎖的redlock或�
 
 SETNX指令會試著將某個key設值，但如果該key-value pair已存在則會失敗返回0，也就是**SET** if **N**ot e**X**ist。
 因此可以藉由這個指令設一個lock，每次request來時先對這個lock下setnx，將值設為expired time，如果成功設立代表該client取得lock，反之則未取得須等待一段時間重新嘗試。考慮到如果某個client因為一些因素無法釋放鎖。鎖過期時會發生client競爭鎖的情形，如果SETNX失敗了則先GET確認鎖是否過期，如果是的話則使用GETSET，接著將GETSET的結果再次確認是否過期，如此一來，先搶到鎖的人會率先因GETSET更改了expired time，使得後使用GETSET的client取得lock並未過期。
+
+## Reference
+
+redis lock: 
+- https://redis.io/commands/setnx
+- https://codertw.com/%E7%A8%8B%E5%BC%8F%E8%AA%9E%E8%A8%80/717420/
+
+httptest usage: https://mileslin.github.io/2020/06/Golang/Unit-testing-HTTP-servers-with-Gin/
+
+miniredis usage: https://github.com/alicebob/miniredis
+
+other implementation: 
+- https://github.com/jameshwc/dcard-middleware/blob/master/limit_test.go
+- https://github.com/KennyChenFight/dcard-simple-demo
+

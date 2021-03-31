@@ -13,7 +13,6 @@ type App struct {
 }
 
 var (
-	config *viper.Viper
 	redisSetting Redis
 	appSetting App
 )

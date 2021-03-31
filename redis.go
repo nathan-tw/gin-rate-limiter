@@ -85,6 +85,8 @@ func (rs *RedisServer) FlushAll() error {
 	return nil
 }
 
+
+// accroding to https://redis.io/commands/setnx, implement lock/unlock methods using setnx.
 func (rs *RedisServer) Lock() error {
 	for {
 		lockTimeout := time.Now().Add(10 * time.Second).Unix()
@@ -142,7 +144,7 @@ func (rs *RedisServer) Unlock() error {
 	}
 
 	if response != 1 {
-		return errors.New("Fail to delete lock")
+		return errors.New("fail to delete lock")
 	}
 
 	return nil
