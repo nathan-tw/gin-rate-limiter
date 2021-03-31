@@ -1,0 +1,7 @@
+Redis: 
+  Host: redis
+  Port: 6379
+
+App:
+  Timeout: 3600
+  MaxIP: 1000
