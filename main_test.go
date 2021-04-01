@@ -5,14 +5,14 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"strconv"
+	"sync"
 	"testing"
 	"time"
 
 	"github.com/alicebob/miniredis"
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/assert/v2"
 	"github.com/go-redis/redis/v8"
-	// "github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/assert"
 )
 
 var (
@@ -68,6 +68,24 @@ func TestRateLimitRemaining(t *testing.T) {
 	tearDown()
 }
 
+func TestRaceCondition(t *testing.T) {
+	setup()
+	var wg sync.WaitGroup
+	wg.Add(testRS.maxIP)
+	for i := 0; i < testRS.maxIP; i++ {
+		go func(r *gin.Engine) {
+			defer wg.Done()
+			w := httptest.NewRecorder()
+			req, _ := http.NewRequest("GET", "/", nil)
+			r.ServeHTTP(w, req)
+			t.Log(w.Result().Header.Get("X-RateLimit-Remaining"))
+		}(r)
+	}
+	wg.Wait()
+	w := getResponse(r)
+	assert.Equal(t, 429, w.Code)
+	tearDown()
+}
 
 func getResponse(r *gin.Engine) *httptest.ResponseRecorder {
 	w := httptest.NewRecorder()
